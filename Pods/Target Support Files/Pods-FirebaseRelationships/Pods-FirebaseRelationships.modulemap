@@ -1,0 +1,6 @@
+framework module Pods_FirebaseRelationships {
+  umbrella header "Pods-FirebaseRelationships-umbrella.h"
+
+  export *
+  module * { export * }
+}
