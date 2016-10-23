@@ -18,18 +18,12 @@ final class UsersViewController: UIViewController {
   
   /// These are observers that are created in the `viewDidLoad` method. All handles must be removed when the view controller deinits.
   fileprivate var handles: [FIRDatabaseHandle] = []
-  
-  deinit {
-    handles.forEach {
-      usersRef.removeObserver(withHandle: $0)
-    }
-  }
 }
 
 // MARK: - Life Cycle
 extension UsersViewController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     
     let childAddedHandle = usersRef.observe(.childAdded, with: { snapshot in
       guard let userDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
@@ -49,6 +43,14 @@ extension UsersViewController {
     })
     
     handles.append(contentsOf: [childAddedHandle, childChangedHandle])
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    
+    handles.forEach {
+      usersRef.removeObserver(withHandle: $0)
+    }
   }
 }
 

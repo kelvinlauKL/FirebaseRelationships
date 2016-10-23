@@ -16,20 +16,19 @@ final class GroupMembersViewController: UIViewController {
   fileprivate var groupRef: FIRDatabaseReference!
   
   fileprivate var handles: [FIRDatabaseHandle] = []
-  
-  deinit {
-    handles.forEach {
-      groupRef.removeObserver(withHandle: $0)
-    }
-  }
 }
 
 // MARK: - Life Cycle 
 extension GroupMembersViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     groupRef = FIRDatabase.database().reference().child("groups").child(group.uid)
+    
+
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     
     let valueHandle = groupRef.observe(.value, with: { snapshot in
       guard let groupDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
@@ -39,6 +38,14 @@ extension GroupMembersViewController {
     })
     
     handles.append(valueHandle)
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    
+    handles.forEach {
+      groupRef.removeObserver(withHandle: $0)
+    }
   }
 }
 // MARK: - SegueHandlerType

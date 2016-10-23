@@ -12,18 +12,20 @@ import Firebase
 final class AddMembersViewController: UIViewController {
   @IBOutlet fileprivate var tableView: UITableView!
   
+  fileprivate let usersRef = FIRDatabase.database().reference().child("users")
+
   var group: Group!
   
   fileprivate var users: [User] = []
   fileprivate var isChecked: [Bool] = []
+  fileprivate var handles: [FIRDatabaseHandle] = []
+  
 }
 
 // MARK: - Life Cycle
 extension AddMembersViewController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-    let usersRef = FIRDatabase.database().reference().child("users")
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     
     usersRef.observe(.childAdded, with: { snapshot in
       guard let userDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
@@ -34,6 +36,14 @@ extension AddMembersViewController {
       self.isChecked.append(false)
       self.tableView.insertRows(at: [IndexPath(row: self.users.count - 1, section: 0)], with: .automatic)
     })
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    
+    handles.forEach {
+      usersRef.removeObserver(withHandle: $0)
+    }
   }
 }
 
