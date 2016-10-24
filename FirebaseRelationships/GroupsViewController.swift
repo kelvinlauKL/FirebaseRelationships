@@ -23,7 +23,7 @@ final class GroupsViewController: UIViewController {
 extension GroupsViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    
+    tableView.reloadData()
     let childAddedHandle = groupsRef.observe(.childAdded, with: { snapshot in
       guard let groupDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
       let group = Group(dictionary: groupDict)
@@ -48,6 +48,8 @@ extension GroupsViewController {
     handles.forEach {
       groupsRef.removeObserver(withHandle: $0)
     }
+    
+    groups = []
   }
 }
 

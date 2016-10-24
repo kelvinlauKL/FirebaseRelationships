@@ -24,7 +24,7 @@ final class UsersViewController: UIViewController {
 extension UsersViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    
+    tableView.reloadData()
     let childAddedHandle = usersRef.observe(.childAdded, with: { snapshot in
       guard let userDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
       let user = User(dictionary: userDict)
@@ -51,6 +51,8 @@ extension UsersViewController {
     handles.forEach {
       usersRef.removeObserver(withHandle: $0)
     }
+    
+    users = []
   }
 }
 

@@ -23,13 +23,12 @@ extension GroupMembersViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     groupRef = FIRDatabase.database().reference().child("groups").child(group.uid)
-    
-
   }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     
+    tableView.reloadData()
     let valueHandle = groupRef.observe(.value, with: { snapshot in
       guard let groupDict = snapshot.value as? [String: Any] else { return print("couldn't cast") }
       let group = Group(dictionary: groupDict)
